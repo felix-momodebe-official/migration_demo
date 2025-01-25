@@ -1,9 +1,10 @@
-name: Sync from Bitbucket
+name: Sync Bitbucket to GitHub
 
 on:
-  push:
-    branches: [ "main" ]
-      
+ push:
+   branches: [ "main" ]
+ pull_request:
+   branches: [ "main" ]
 
 jobs:
   sync:
@@ -13,12 +14,18 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Sync from Bitbucket.
+      - name: Configure Git User
+        run: |
+          git config --global user.name 'GitHub Sync Bot'
+          git config --global user.email 'sync@github.com'
+
+      - name: Sync from Bitbucket
         env:
           BITBUCKET_USERNAME: ${{ secrets.BITBUCKET_USERNAME }}
           BITBUCKET_PASSWORD: ${{ secrets.BITBUCKET_PASSWORD }}
         run: |
           git remote add bitbucket https://$BITBUCKET_USERNAME:$BITBUCKET_PASSWORD@bitbucket.org/succpinnsolutions/ecommerapp.git
-          git fetch bitbucket
-          git merge bitbucket/main
-          git push origin main
+          git fetch bitbucket main
+          git checkout main
+          git reset --hard bitbucket/main
+          git push origin main --force
