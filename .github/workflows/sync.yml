@@ -1,31 +1,30 @@
-name: Sync Bitbucket to GitHub
+name: Sync from Bitbucket to GitHub
 
 on:
- push:
-   branches: [ "main" ]
- pull_request:
-   branches: [ "main" ]
+  push:
+    branches:
+      - 'main'
+      - 'develop'  # You can list other branches as well
 
 jobs:
   sync:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
+    - name: Checkout the repo
+      uses: actions/checkout@v2
 
-      - name: Configure Git User
-        run: |
-          git config --global user.name 'GitHub Sync Bot'
-          git config --global user.email 'sync@github.com'
+    - name: Set up Git
+      run: |
+        git config --global user.name "GitHub Actions"
+        git config --global user.email "action@github.com"
 
-      - name: Sync from Bitbucket
-        env:
-          BITBUCKET_USERNAME: ${{ secrets.BITBUCKET_USERNAME }}
-          BITBUCKET_PASSWORD: ${{ secrets.BITBUCKET_PASSWORD }}
-        run: |
-          git remote add bitbucket https://$BITBUCKET_USERNAME:$BITBUCKET_PASSWORD@bitbucket.org/succpinnsolutions/ecommerapp.git
-          git fetch bitbucket main
-          git checkout main
-          git reset --hard bitbucket/main
-          git push origin main --force
+    - name: Add Bitbucket as remote
+      run: |
+        git remote add bitbucket https://succpinnsolutions:ATBBeuBWUpFyNBcyWNDmw9cG4Vr9DE8CA653@bitbucket.org/succpinnsolutions/ecommerapp.git
+        git fetch bitbucket
+
+    - name: Pull and push changes to GitHub
+      run: |
+        git pull bitbucket main
+        git push github main
