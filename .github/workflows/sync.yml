@@ -1,4 +1,4 @@
-name: Sync from Bitbucket to GitHub
+name: Sync from Bitbucket to GitHub.
 
 on:
   push:
