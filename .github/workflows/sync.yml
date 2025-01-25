@@ -21,7 +21,7 @@ jobs:
 
     - name: Add Bitbucket as remote
       run: |
-        git remote add bitbucket https://devopz0711@gmail.com:ATBBeuBWUpFyNBcyWNDmw9cG4Vr9DE8CA653@bitbucket.org/succpinnsolutions/ecommerapp.git
+        git remote add bitbucket https://succpinnsolutions-admin:ATBBeuBWUpFyNBcyWNDmw9cG4Vr9DE8CA653@bitbucket.org/succpinnsolutions/ecommerapp.git
         git fetch bitbucket
 
     - name: Pull and push changes to GitHub
