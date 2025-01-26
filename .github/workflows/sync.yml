@@ -2,8 +2,8 @@ name: Mirror Bitbucket to GitHub
 
 on:
   schedule:
-    - cron: '*/5 * * * *'
-  workflow_dispatch:
+    - cron: '*/5 * * * *' # Runs every 5 minutes (adjust as needed)
+  workflow_dispatch: # Allows manual triggering
 
 jobs:
   mirror:
@@ -12,23 +12,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0
-
-      - name: Configure SSH
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.BITBUCKET_SSH_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan bitbucket.org >> ~/.ssh/known_hosts
+          fetch-depth: 0 # Important: Fetches all history
 
       - name: Mirror to GitHub
         run: |
           git remote set-url origin https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
-          git fetch bitbucket git@bitbucket.org:succpinnsolutions/ecommerapp.git
+          git fetch bitbucket  https://succpinnsolutions-admin@bitbucket.org/succpinnsolutions/ecommerapp.git # Fetch changes from Bitbucket
           git push --mirror origin
         env:
-          GIT_SSH_COMMAND: ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no
-        
-      - name: Clean up SSH key
-        if: always()
-        run: rm -rf ~/.ssh
+          BITBUCKET_USERNAME: succpinnsolutions-admin
+          BITBUCKET_PASSWORD: ${{ secrets.BITBUCKET_PASSWORD }}
