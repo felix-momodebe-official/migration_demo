@@ -1,30 +1,24 @@
-name: Sync from Bitbucket to GitHub.
+name: Mirror Bitbucket to GitHub
 
 on:
-  push:
-    branches:
-      - 'main'
-      - 'develop'  # You can list other branches as well
+  schedule:
+    - cron: '*/5 * * * *' # Runs every 5 minutes (adjust as needed)
+  workflow_dispatch: # Allows manual triggering
 
 jobs:
-  sync:
+  mirror:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout the repo
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # Important: Fetches all history
 
-    - name: Set up Git
-      run: |
-        git config --global user.name "GitHub Actions"
-        git config --global user.email "action@github.com"
-
-    - name: Add Bitbucket as remote
-      run: |
-        git remote add bitbucket https://succpinnsolutions-admin:ATBBeuBWUpFyNBcyWNDmw9cG4Vr9DE8CA653@bitbucket.org/succpinnsolutions/ecommerapp.git
-        git fetch bitbucket
-
-    - name: Pull and push changes to GitHub
-      run: |
-        git pull bitbucket main
-        git push github main
+      - name: Mirror to GitHub
+        run: |
+          git remote set-url origin https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
+          git fetch bitbucket  https://succpinnsolutions-admin@bitbucket.org/succpinnsolutions/ecommerapp.git # Fetch changes from Bitbucket
+          git push --mirror origin
+        env:
+          BITBUCKET_USERNAME: succpinnsolutions-admin
+          BITBUCKET_PASSWORD: ${{ secrets.BITBUCKET_PASSWORD }}
