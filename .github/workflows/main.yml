@@ -1,8 +1,8 @@
 name: Sync from Bitbucket
 
 on:
-  schedule:
-    - cron: '0 * * * *' # Sync every hour
+  # schedule:
+  #   - cron: '0 * * * *' # Sync every hour
   workflow_dispatch: # Allow manual trigger
 
 jobs:
